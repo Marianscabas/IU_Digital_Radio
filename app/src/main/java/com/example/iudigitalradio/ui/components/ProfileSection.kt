@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-
+import android.widget.Toast
 /**
  * Sección de perfil del usuario que incluye visualización del nombre, estado en vivo
  * y captura de foto de perfil mediante la cámara del dispositivo.
@@ -53,6 +53,12 @@ fun ProfileSection(
     ) { concedido ->
         if (concedido) {
             cameraLauncher.launch(null)
+        } else {
+            Toast.makeText(
+                context,
+                "Necesitas conceder el permiso de cámara para tomar la foto",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

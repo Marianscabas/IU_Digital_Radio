@@ -21,7 +21,8 @@ import com.example.iudigitalradio.ui.viewmodel.RadioViewModel
 @Composable
 fun RadioAppScreen(
     modifier: Modifier = Modifier,
-    viewModel: RadioViewModel = remember { RadioViewModel() }
+    viewModel: RadioViewModel = remember { RadioViewModel() },
+    onVibrar: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -30,13 +31,16 @@ fun RadioAppScreen(
             .padding(16.dp)
     ) {
         Spacer(modifier = Modifier.height(24.dp)) // padding top de la sección de perfil
-        
+
         ProfileSection(
             fotoUsuario = viewModel.fotoUsuario,
             onFotoCaptured = { bitmap -> viewModel.updateFotoUsuario(bitmap) }
         )
 
-        PlayerSection()
+        PlayerSection(
+            onMuteClick = onVibrar,
+            onPlayClick = onVibrar
+        )
 
         StationList(stations = viewModel.stations)
     }
