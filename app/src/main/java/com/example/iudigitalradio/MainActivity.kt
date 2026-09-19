@@ -46,21 +46,42 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import android.widget.Toast
 class MainActivity : ComponentActivity() {
+
+    private val vibrator: Vibrator by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            manager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+    }
+
+    private fun vibrarCorto() {
+        if (!vibrator.hasVibrator()) return
+        vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             IUDigitalRadioTheme {
-                RadioAppScreen()
+                RadioAppScreen(onVibrar = { vibrarCorto() })
             }
         }
     }
 }
 
 @Composable
-fun RadioAppScreen(modifier: Modifier = Modifier) {
+fun RadioAppScreen(modifier: Modifier = Modifier, onVibrar: () -> Unit = {}) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -70,7 +91,7 @@ fun RadioAppScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(24.dp)) // padding top de la sección de perfil
         ProfileSection()
 
-        PlayerSection()
+        PlayerSection(onVibrar = onVibrar)
 
         StationList()
     }
@@ -94,6 +115,12 @@ fun ProfileSection(modifier: Modifier = Modifier) {
     ) { concedido ->
         if (concedido) {
             cameraLauncher.launch(null)
+        } else {
+            Toast.makeText(
+                context,
+                "Necesitas conceder el permiso de cámara para tomar la foto",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -176,7 +203,7 @@ fun ProfileSection(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PlayerSection(modifier: Modifier = Modifier) {
+fun PlayerSection(modifier: Modifier = Modifier, onVibrar: () -> Unit = {}) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -225,7 +252,7 @@ fun PlayerSection(modifier: Modifier = Modifier) {
             ) {
                 // Botón Mute
                 IconButton(
-                    onClick = { /* luego conectamos esto */ }
+                    onClick = { onVibrar() /* luego conectamos esto */ }
                 ) {
                     Icon(
                         imageVector = Icons.Default.VolumeUp,
@@ -246,7 +273,7 @@ fun PlayerSection(modifier: Modifier = Modifier) {
 
                     // Botón de Play (el mismo de antes, sin cambios)
                     IconButton(
-                        onClick = { /* luego conectamos esto */ },
+                        onClick = { onVibrar() /* luego conectamos esto */ },
                         modifier = Modifier
                             .size(60.dp)
                             .clip(CircleShape)
