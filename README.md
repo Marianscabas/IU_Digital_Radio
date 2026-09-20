@@ -13,6 +13,19 @@ Ya implementado (commit `Interfaz + camara`):
 - ✅ RF-03 (parcial) — Permiso de `CAMERA` solicitado en tiempo de ejecución; `CAMERA` y `VIBRATE` declarados en el [AndroidManifest.xml](app/src/main/AndroidManifest.xml).
 - ✅ Estructura visual de las 3 secciones: Perfil, Reproductor central, Catálogo de emisoras.
 
+## Arquitectura del Proyecto (Patrón MVVM)
+
+El proyecto ha sido refactorizado e institucionalizado bajo el patrón arquitectónico oficial recomendado por Google: **MVVM (Model-View-ViewModel)**. Esto separa completamente el diseño visual de la lógica del negocio, maximizando la modularidad y permitiendo que cada miembro de la célula trabaje de forma paralela y limpia:
+
+- **`data/model/Station.kt`**: Modelo conceptual puro que define los atributos de una emisora de radio (`name`, `genreAndFrequency`).
+- **`ui/viewmodel/RadioViewModel.kt`**: Encargado de almacenar y preservar los estados reactivos mutables de la pantalla (como la foto capturada por la cámara) e inyectar los flujos de datos. Esto previene pérdidas de datos ante rotaciones de pantalla o cambios de configuración.
+- **`ui/components/`**: Módulos visuales puros reutilizables e independientes:
+  - `ProfileSection.kt`: Vista aislada de la tarjeta de bienvenida y llamada segura a la cámara nativa.
+  - `PlayerSection.kt`: Panel de control de reproducción de medios.
+  - `StationList.kt`: Listado eficiente (`LazyColumn`) para pintar las emisoras de radio.
+- **`ui/screens/RadioAppScreen.kt`**: Orquestador principal que enlaza las propiedades reactivas del `RadioViewModel` con cada componente visual.
+- **`MainActivity.kt`**: Actividad simplificada al máximo que actúa exclusivamente como el punto de entrada y contenedor de inicialización del Tema de Material 3 (`IUDigitalRadioTheme`).
+
 Pendiente (lo que falta repartir entre los 3 integrantes):
 
 - ⬜ RF-04 — Estado dinámico real del reproductor (`isPlaying`, `selectedStation`) con `mutableStateOf` / `rememberSaveable`.
