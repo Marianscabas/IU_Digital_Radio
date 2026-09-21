@@ -38,11 +38,26 @@ fun RadioAppScreen(
         )
 
         PlayerSection(
-            onMuteClick = onVibrar,
-            onPlayClick = onVibrar
+            stationName = viewModel.selectedStation.name,
+            stationGenre = viewModel.selectedStation.genreAndFrequency,
+            isPlaying = viewModel.isPlaying,
+            isMuted = viewModel.isMuted,
+            onMuteClick = {
+                viewModel.toggleMute()
+                onVibrar()
+            },
+            onPlayClick = {
+                viewModel.togglePlayPause()
+                onVibrar()
+            }
         )
 
-        StationList(stations = viewModel.stations)
+        StationList(
+            stations = viewModel.stations,
+            onStationClick = { station ->
+                viewModel.selectStation(station)
+            }
+        )
     }
 }
 
@@ -53,3 +68,4 @@ fun RadioAppScreenPreview() {
         RadioAppScreen()
     }
 }
+

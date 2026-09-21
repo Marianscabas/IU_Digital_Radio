@@ -1,6 +1,7 @@
 package com.example.iudigitalradio.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +28,7 @@ import com.example.iudigitalradio.data.model.Station
 @Composable
 fun StationList(
     stations: List<Station>,
+    onStationClick: (Station) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(top = 24.dp)) {
@@ -51,7 +53,11 @@ fun StationList(
 
         LazyColumn {
             items(stations) { station ->
-                StationItem(nombre = station.name, genero = station.genreAndFrequency)
+                StationItem(
+                    nombre = station.name,
+                    genero = station.genreAndFrequency,
+                    onClick = { onStationClick(station) }
+                )
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
@@ -62,9 +68,15 @@ fun StationList(
  * Tarjeta individual para mostrar cada elemento de emisora.
  */
 @Composable
-fun StationItem(nombre: String, genero: String) {
+fun StationItem(
+    nombre: String,
+    genero: String,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A2E))
     ) {

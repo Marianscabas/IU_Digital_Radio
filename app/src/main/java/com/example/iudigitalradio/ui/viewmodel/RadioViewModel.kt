@@ -16,6 +16,19 @@ class RadioViewModel : ViewModel() {
     var fotoUsuario by mutableStateOf<Bitmap?>(null)
         private set
 
+    // Estado dinámico del reproductor
+    var isPlaying by mutableStateOf(false)
+        private set
+
+    var isMuted by mutableStateOf(false)
+        private set
+
+    // Emisora seleccionada actualmente (por defecto la primera)
+    var selectedStation by mutableStateOf(
+        Station("Electro Pulse FM", "Electronic · 98.5 MHz")
+    )
+        private set
+
     // Lista inmutable de emisoras de la radio utilizando el modelo de datos formal
     val stations = listOf(
         Station("Electro Pulse FM", "Electronic · 98.5 MHz"),
@@ -30,5 +43,26 @@ class RadioViewModel : ViewModel() {
      */
     fun updateFotoUsuario(bitmap: Bitmap?) {
         fotoUsuario = bitmap
+    }
+
+    /**
+     * Alterna entre reproducir y pausar.
+     */
+    fun togglePlayPause() {
+        isPlaying = !isPlaying
+    }
+
+    /**
+     * Alterna el estado de silencio.
+     */
+    fun toggleMute() {
+        isMuted = !isMuted
+    }
+
+    /**
+     * Cambia la emisora activa.
+     */
+    fun selectStation(station: Station) {
+        selectedStation = station
     }
 }

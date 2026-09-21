@@ -8,7 +8,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.filled.VolumeOff
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,6 +30,10 @@ import androidx.compose.ui.unit.sp
  */
 @Composable
 fun PlayerSection(
+    stationName: String,
+    stationGenre: String,
+    isPlaying: Boolean,
+    isMuted: Boolean,
     modifier: Modifier = Modifier,
     onMuteClick: () -> Unit = {},
     onPlayClick: () -> Unit = {},
@@ -62,13 +68,13 @@ fun PlayerSection(
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Jazz Lounge 24",
+                text = stationName,
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Jazz · 101.3 MHz",
+                text = stationGenre,
                 color = Color(0xFF9C8CFF),
                 fontSize = 14.sp
             )
@@ -82,8 +88,8 @@ fun PlayerSection(
                 // Botón Mute
                 IconButton(onClick = onMuteClick) {
                     Icon(
-                        imageVector = Icons.Default.VolumeUp,
-                        contentDescription = "Mute",
+                        imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
+                        contentDescription = if (isMuted) "Unmute" else "Mute",
                         tint = Color.White
                     )
                 }
@@ -95,10 +101,10 @@ fun PlayerSection(
                         modifier = Modifier
                             .size(100.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF7C4DFF).copy(alpha = 0.15f))
+                            .background(Color(0xFF7C4DFF).copy(alpha = if (isPlaying) 0.3f else 0.15f))
                     )
 
-                    // Botón de Play
+                    // Botón de Play/Pause
                     IconButton(
                         onClick = onPlayClick,
                         modifier = Modifier
@@ -107,8 +113,8 @@ fun PlayerSection(
                             .background(Color(0xFF7C4DFF))
                     ) {
                         Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "Play",
+                            imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = if (isPlaying) "Pause" else "Play",
                             tint = Color.White
                         )
                     }
