@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.iudigitalradio.ui.components.AudioPlayer
 import com.example.iudigitalradio.ui.components.PlayerSection
 import com.example.iudigitalradio.ui.components.ProfileSection
 import com.example.iudigitalradio.ui.components.StationList
@@ -23,6 +24,20 @@ fun RadioAppScreen(
     modifier: Modifier = Modifier,
     viewModel: RadioViewModel = remember { RadioViewModel() }
 ) {
+
+    //estados de audio
+    val isPlaying = try {viewModel.isPlaying} catch (e: Exception){false}
+    val isMuted = try {viewModel.isMuted} catch (e: Exception){false}
+
+    //URL de prueba
+    val streamURL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+
+    //invocar reprodcutor de audio
+    AudioPlayer(
+        streamURL = viewModel.selectedStationUrl,
+        isPlaying = viewModel.isPlaying,
+        isMuted = viewModel.isMuted
+    )
     Column(
         modifier = modifier
             .fillMaxSize()

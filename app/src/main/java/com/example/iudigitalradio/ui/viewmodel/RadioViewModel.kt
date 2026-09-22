@@ -25,6 +25,32 @@ class RadioViewModel : ViewModel() {
         Station("Urban Beats HQ", "Hip-Hop · 92.1 MHz")
     )
 
+    //logica estado dinamico de reproduccion
+    //estado play / pause
+    var isPlaying by mutableStateOf(false)
+        private set
+
+    //estdo de mute
+    var isMuted by mutableStateOf(false)
+        private set
+
+    //emisora por defecto
+    var selectedStationUrl by mutableStateOf("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
+
+    //acciones para cambiar de estado
+    fun togglePlayPuase(){
+        isPlaying = !isPlaying
+    }
+
+    fun toggleMuted(){
+        isMuted = !isMuted
+    }
+
+    fun selectStation(url: String){
+        selectedStationUrl = url
+        isPlaying = true
+    }
+
     /**
      * Actualiza la foto de perfil capturada desde la cámara.
      */
