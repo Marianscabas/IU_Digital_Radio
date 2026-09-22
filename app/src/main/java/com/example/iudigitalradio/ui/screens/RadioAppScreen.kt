@@ -22,7 +22,8 @@ import com.example.iudigitalradio.ui.viewmodel.RadioViewModel
 @Composable
 fun RadioAppScreen(
     modifier: Modifier = Modifier,
-    viewModel: RadioViewModel = remember { RadioViewModel() }
+    viewModel: RadioViewModel = remember { RadioViewModel() },
+    onVibrar: () -> Unit = {}
 ) {
 
     //estados de audio
@@ -45,15 +46,33 @@ fun RadioAppScreen(
             .padding(16.dp)
     ) {
         Spacer(modifier = Modifier.height(24.dp)) // padding top de la sección de perfil
-        
+
         ProfileSection(
             fotoUsuario = viewModel.fotoUsuario,
             onFotoCaptured = { bitmap -> viewModel.updateFotoUsuario(bitmap) }
         )
 
-        PlayerSection()
+        PlayerSection(
+            stationName = viewModel.selectedStation.name,
+            stationGenre = viewModel.selectedStation.genreAndFrequency,
+            isPlaying = viewModel.isPlaying,
+            isMuted = viewModel.isMuted,
+            onMuteClick = {
+                viewModel.toggleMute()
+                onVibrar()
+            },
+            onPlayClick = {
+                viewModel.togglePlayPause()
+                onVibrar()
+            }
+        )
 
-        StationList(stations = viewModel.stations)
+        StationList(
+            stations = viewModel.stations,
+            onStationClick = { station ->
+                viewModel.selectStation(station)
+            }
+        )
     }
 }
 
@@ -64,3 +83,4 @@ fun RadioAppScreenPreview() {
         RadioAppScreen()
     }
 }
+
