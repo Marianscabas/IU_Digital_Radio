@@ -16,13 +16,6 @@ class RadioViewModel : ViewModel() {
     var fotoUsuario by mutableStateOf<Bitmap?>(null)
         private set
 
-    // Estado dinámico del reproductor
-    var isPlaying by mutableStateOf(false)
-        private set
-
-    var isMuted by mutableStateOf(false)
-        private set
-
     // Emisora seleccionada actualmente (por defecto la primera)
     var selectedStation by mutableStateOf(
         Station("Electro Pulse FM", "Electronic · 98.5 MHz")
@@ -49,20 +42,6 @@ class RadioViewModel : ViewModel() {
 
     //emisora por defecto
     var selectedStationUrl by mutableStateOf("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
-
-    //acciones para cambiar de estado
-    fun togglePlayPuase(){
-        isPlaying = !isPlaying
-    }
-
-    fun toggleMuted(){
-        isMuted = !isMuted
-    }
-
-    fun selectStation(url: String){
-        selectedStationUrl = url
-        isPlaying = true
-    }
 
     /**
      * Actualiza la foto de perfil capturada desde la cámara.
