@@ -2,6 +2,7 @@ package com.example.iudigitalradio.ui.viewmodel
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -18,17 +19,17 @@ class RadioViewModel : ViewModel() {
 
     // Emisora seleccionada actualmente (por defecto la primera)
     var selectedStation by mutableStateOf(
-        Station("Electro Pulse FM", "Electronic · 98.5 MHz")
+        Station("Electro Pulse FM", "Electronic · 98.5 MHz","https://uk7.internet-radio.com/proxy/movedahouse?mp=/stream;")
     )
         private set
 
     // Lista inmutable de emisoras de la radio utilizando el modelo de datos formal
     val stations = listOf(
-        Station("Electro Pulse FM", "Electronic · 98.5 MHz"),
-        Station("Jazz Lounge 24", "Jazz · 101.3 MHz"),
-        Station("Deep House Radio", "House · 104.7 MHz"),
-        Station("Classical WQXR", "Classical · 96.3 MHz"),
-        Station("Urban Beats HQ", "Hip-Hop · 92.1 MHz")
+        Station("Electro Pulse FM", "Electronic · 98.5 MHz","https://uk7.internet-radio.com/proxy/movedahouse?mp=/stream;"),
+        Station("Jazz Lounge 24", "Jazz · 101.3 MHz","https://uk3.internet-radio.com/proxy/majesticjukebox?mp=/stream"),
+        Station("Deep House Radio", "House · 104.7 MHz","https://uk2.internet-radio.com/proxy/danceuk?mp=/stream;"),
+        Station("Classical WQXR", "Classical · 96.3 MHz","http://philae.shoutca.st:8204/stream/1/"),
+        Station("Urban Beats HQ", "Hip-Hop · 92.1 MHz","https://us2.internet-radio.com/proxy/riddim1radio?mp=/stream;")
     )
 
     //logica estado dinamico de reproduccion
@@ -41,7 +42,7 @@ class RadioViewModel : ViewModel() {
         private set
 
     //emisora por defecto
-    var selectedStationUrl by mutableStateOf("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
+    var selectedStationUrl by mutableStateOf(selectedStation.streamUrl)
 
     /**
      * Actualiza la foto de perfil capturada desde la cámara.

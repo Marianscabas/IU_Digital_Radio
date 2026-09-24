@@ -5,5 +5,6 @@ package com.example.iudigitalradio.data.model
  */
 data class Station(
     val name: String,
-    val genreAndFrequency: String
+    val genreAndFrequency: String,
+    val streamUrl: String
 )
