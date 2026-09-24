@@ -18,22 +18,22 @@ fun AudioPlayer(
     //obtiene el contexto actual de la aplicacion
     val context = LocalContext.current
 
-    //crea el resproductor exoplayer
+    //crea el resproductor exoplayer limpia sin el mediaItem
     val exoPlayer = remember(context){
-        ExoPlayer.Builder(context).build().apply {
-            val mediaItem = MediaItem.fromUri(streamURL)
-            setMediaItem(mediaItem)
-            prepare()
-        }
+        ExoPlayer.Builder(context).build()
     }
 
     //se ejecuta cuando cambia la URL del audio
     LaunchedEffect(streamURL){
-        //crea un nuevo elemento multimedia
-        val mediaItem = MediaItem.fromUri(streamURL)
-        exoPlayer.setMediaItem(mediaItem)
-        exoPlayer.prepare()
-        if (isPlaying) exoPlayer.play()
+        if(streamURL.isNotEmpty()){
+            exoPlayer.stop()
+            exoPlayer.clearMediaItems()
+        }
+            //crea un nuevo elemento multimedia
+            val mediaItem = MediaItem.fromUri(streamURL)
+            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.prepare()
+            if (isPlaying) exoPlayer.play()
     }
     //se ejecuta cuando cambia el estado de la reproduccion
     LaunchedEffect(isPlaying){

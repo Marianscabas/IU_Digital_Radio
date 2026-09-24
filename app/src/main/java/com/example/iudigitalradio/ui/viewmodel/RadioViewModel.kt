@@ -70,5 +70,7 @@ class RadioViewModel : ViewModel() {
      */
     fun selectStation(station: Station) {
         selectedStation = station
+        selectedStationUrl = station.streamUrl
+        isPlaying= true
     }
 }
