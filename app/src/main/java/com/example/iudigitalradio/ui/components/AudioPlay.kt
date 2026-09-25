@@ -8,48 +8,66 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 
-//componente para controlar la reproduccion del audio
 @Composable
 fun AudioPlayer(
     streamURL: String,
     isPlaying: Boolean,
     isMuted: Boolean
-){
-    //obtiene el contexto actual de la aplicacion
+) {
     val context = LocalContext.current
 
-    //crea el resproductor exoplayer limpia sin el mediaItem
-    val exoPlayer = remember(context){
-        ExoPlayer.Builder(context).build()
+    val exoPlayer = remember(context) {
+        try {
+            ExoPlayer.Builder(context).build()
+        } catch (_: Exception) {
+            null
+        }
     }
 
-    //se ejecuta cuando cambia la URL del audio
-    LaunchedEffect(streamURL){
-        if(streamURL.isNotEmpty()){
-            exoPlayer.stop()
-            exoPlayer.clearMediaItems()
+    LaunchedEffect(streamURL, exoPlayer) {
+        val player = exoPlayer ?: return@LaunchedEffect
+        try {
+            if (streamURL.isNotEmpty()) {
+                player.stop()
+                player.clearMediaItems()
+                val mediaItem = MediaItem.fromUri(streamURL)
+                player.setMediaItem(mediaItem)
+                player.prepare()
+                if (isPlaying) {
+                    player.play()
+                }
+            }
+        } catch (_: Exception) {
         }
-            //crea un nuevo elemento multimedia
-            val mediaItem = MediaItem.fromUri(streamURL)
-            exoPlayer.setMediaItem(mediaItem)
-            exoPlayer.prepare()
-            if (isPlaying) exoPlayer.play()
     }
-    //se ejecuta cuando cambia el estado de la reproduccion
-    LaunchedEffect(isPlaying){
-        if (isPlaying) exoPlayer.play()
-        else exoPlayer.pause()
+
+    LaunchedEffect(isPlaying, exoPlayer) {
+        val player = exoPlayer ?: return@LaunchedEffect
+        try {
+            if (isPlaying) {
+                player.play()
+            } else {
+                player.pause()
+            }
+        } catch (_: Exception) {
+        }
     }
-    //se ejecuta cuando cambia el estado a muted
-    LaunchedEffect(isMuted){
-        exoPlayer.volume = if (isMuted) 0f
-        else 1f
+
+    LaunchedEffect(isMuted, exoPlayer) {
+        val player = exoPlayer ?: return@LaunchedEffect
+        try {
+            player.volume = if (isMuted) 0f else 1f
+        } catch (_: Exception) {
+        }
     }
-    //se utiliza para dejar de usar los recuros del reproductor cuando se dejo de utilizar
-    DisposableEffect(Unit){
-        onDispose{
-            exoPlayer.stop()
-            exoPlayer.release()
+
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            try {
+                exoPlayer?.stop()
+                exoPlayer?.release()
+            } catch (_: Exception) {
+            }
         }
     }
 }

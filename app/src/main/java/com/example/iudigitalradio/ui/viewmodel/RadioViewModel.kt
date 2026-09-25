@@ -6,43 +6,65 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.iudigitalradio.data.model.Station
+import com.example.iudigitalradio.data.repository.RadioRepository
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel encargado de la lógica de negocio y del estado de la pantalla principal de la Radio.
+ * Integra la obtención de emisoras en tiempo real desde Radio Browser API mediante el repositorio.
  */
 class RadioViewModel : ViewModel() {
+
+    private val repository = RadioRepository()
 
     // Estado reactivo para la foto de perfil del usuario
     var fotoUsuario by mutableStateOf<Bitmap?>(null)
         private set
 
-    // Emisora seleccionada actualmente (por defecto la primera)
-    var selectedStation by mutableStateOf(
-        Station("Electro Pulse FM", "Electronic · 98.5 MHz","https://uk7.internet-radio.com/proxy/movedahouse?mp=/stream;")
-    )
+    // Emisoras disponibles (inicializadas con el fallback y actualizadas desde la API)
+    val stations = mutableStateListOf<Station>().apply {
+        addAll(repository.defaultStations)
+    }
+
+    // Emisora seleccionada actualmente (por defecto la primera de la lista)
+    var selectedStation by mutableStateOf(repository.defaultStations.first())
         private set
 
-    // Lista inmutable de emisoras de la radio utilizando el modelo de datos formal
-    val stations = listOf(
-        Station("Electro Pulse FM", "Electronic · 98.5 MHz","https://uk7.internet-radio.com/proxy/movedahouse?mp=/stream;"),
-        Station("Jazz Lounge 24", "Jazz · 101.3 MHz","https://uk3.internet-radio.com/proxy/majesticjukebox?mp=/stream"),
-        Station("Deep House Radio", "House · 104.7 MHz","https://uk2.internet-radio.com/proxy/danceuk?mp=/stream;"),
-        Station("Classical WQXR", "Classical · 96.3 MHz","http://philae.shoutca.st:8204/stream/1/"),
-        Station("Urban Beats HQ", "Hip-Hop · 92.1 MHz","https://us2.internet-radio.com/proxy/riddim1radio?mp=/stream;")
-    )
-
-    //logica estado dinamico de reproduccion
-    //estado play / pause
+    // Estado play / pause
     var isPlaying by mutableStateOf(false)
         private set
 
-    //estdo de mute
+    // Estado de mute
     var isMuted by mutableStateOf(false)
         private set
 
-    //emisora por defecto
+    // URL de la emisora seleccionada
     var selectedStationUrl by mutableStateOf(selectedStation.streamUrl)
+        private set
+
+    init {
+        loadStationsFromApi()
+    }
+
+    /**
+     * Carga de manera asíncrona las emisoras desde la API pública de Radio Browser.
+     */
+    private fun loadStationsFromApi() {
+        viewModelScope.launch {
+            val fetchedStations = repository.fetchStations()
+            if (fetchedStations.isNotEmpty()) {
+                stations.clear()
+                stations.addAll(fetchedStations)
+                // Asegurar que la emisora seleccionada sea válida dentro de la nueva lista
+                if (!stations.any { it.streamUrl == selectedStation.streamUrl }) {
+                    selectedStation = stations.first()
+                    selectedStationUrl = stations.first().streamUrl
+                }
+            }
+        }
+    }
 
     /**
      * Actualiza la foto de perfil capturada desde la cámara.
@@ -71,6 +93,6 @@ class RadioViewModel : ViewModel() {
     fun selectStation(station: Station) {
         selectedStation = station
         selectedStationUrl = station.streamUrl
-        isPlaying= true
+        isPlaying = true
     }
 }

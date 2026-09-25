@@ -1,6 +1,5 @@
 package com.example.iudigitalradio
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -12,28 +11,33 @@ import androidx.activity.enableEdgeToEdge
 import com.example.iudigitalradio.ui.screens.RadioAppScreen
 import com.example.iudigitalradio.ui.theme.IUDigitalRadioTheme
 
-/**
- * Actividad principal que sirve como punto de entrada de la aplicación.
- */
 class MainActivity : ComponentActivity() {
 
-    private val vibrator: Vibrator by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            manager.defaultVibrator
-        } else {
-            @Suppress("DEPRECATION")
-            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    private val vibrator: Vibrator? by lazy {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                manager?.defaultVibrator
+            } else {
+                @Suppress("DEPRECATION")
+                getSystemService(VIBRATOR_SERVICE) as? Vibrator
+            }
+        } catch (_: Exception) {
+            null
         }
     }
 
     private fun vibrarCorto() {
-        if (!vibrator.hasVibrator()) return
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(50)
+        val vib = vibrator ?: return
+        try {
+            if (!vib.hasVibrator()) return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vib.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vib.vibrate(50)
+            }
+        } catch (_: Exception) {
         }
     }
 
